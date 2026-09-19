@@ -1,0 +1,6 @@
+{
+  "name": "Table & Taste",
+  "description": "Premium artisanal restaurant web application with online ordering, table reservations, interactive menu browsing, customer portal, and management dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
