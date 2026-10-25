@@ -1,0 +1,121 @@
+name: Infrastructure Provisioning Pipeline (Terraform)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "terraform-aks/**"
+      - ".github/workflows/infra-pipeline.yaml"
+
+permissions:
+  security-events: write
+  contents: read
+
+jobs:
+  checkov-terraform:
+    name: Checkov IaC Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Create Directory for Reports
+        run: mkdir -p reports
+
+      - name: Run Terraform Checkov Scan
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/repo \
+            -w /repo \
+            bridgecrew/checkov:latest \
+            --directory /repo/terraform-aks \
+            --framework terraform \
+            --output sarif \
+            --output-file-path reports \
+            --soft-fail
+
+      - name: Upload Checkov SARIF Results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports/results_sarif.sarif
+
+  terraform-deploy:
+    name: Terraform Plan & Apply
+    runs-on: ubuntu-latest
+    needs: checkov-terraform
+    defaults:
+      run:
+        working-directory: ./terraform-aks
+
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v3
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Export Terraform ARM Environment Variables from AZURE_CREDENTIALS
+        run: |
+          CLIENT_ID=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.clientId')
+          CLIENT_SECRET=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.clientSecret')
+          TENANT_ID=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.tenantId')
+          SUBSCRIPTION_ID=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.subscriptionId')
+
+          echo "ARM_CLIENT_ID=$CLIENT_ID" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=$CLIENT_SECRET" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=$TENANT_ID" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID" >> $GITHUB_ENV
+
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az account show
+
+      - name: Setup Terraform CLI
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.0
+
+      - name: Terraform Init
+        run: |
+          terraform init -reconfigure
+            
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
+
+      - name: Conditional One-Time State Import
+        run: |
+          if ! terraform state list | grep -q "azurerm_storage_account.state_sa"; then
+            echo "Importing storage account into remote state..."
+            terraform import -input=false azurerm_storage_account.state_sa \
+              "/subscriptions/a2b28c85-1948-4263-90ca-bade2bac4df4/resourceGroups/kml_rg_main-0810375e0ea74db3/providers/Microsoft.Storage/storageAccounts/tfst4aadea6c" || true
+          fi
+
+          if ! terraform state list | grep -q "azurerm_storage_container.state_container"; then
+            echo "Importing storage container into remote state..."
+            terraform import -input=false azurerm_storage_container.state_container \
+              "https://tfst4aadea6c.blob.core.windows.net/nimbuskeyubio123" || true
+          fi
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan -input=false
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve tfplan
