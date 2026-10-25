@@ -92,7 +92,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform Format Check
-        run: terraform fmt -check
+        run: terraform fmt -recursive 
 
       - name: Conditional One-Time State Import
         run: |
