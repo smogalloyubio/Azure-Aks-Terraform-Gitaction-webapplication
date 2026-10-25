@@ -1,6 +1,6 @@
 variable "resource_group_name" {
   type    = string
-  default = "rg-tableandshop-aks"
+  default = "kml_rg_main-7394019cd7a14f7f"
 }
 
 variable "location" {
@@ -30,12 +30,12 @@ variable "subnet_address_prefixes" {
 
 variable "cluster_name" {
   type    = string
-  default = "tableandshop-aks-cluster"
+  default = "tshopaks"
 }
 
 variable "dns_prefix" {
   type    = string
-  default = "tableandshop-k8s"
+  default = "tshopk8s"
 }
 
 variable "node_count" {
@@ -48,11 +48,9 @@ variable "vm_size" {
   default = "Standard_D2s_v3"
 }
 
-
-
 variable "storage_account_name" {
   type    = string
-  default = "tshopstorageacct"
+  default = "tshopapp"
 }
 
 variable "container_name" {
