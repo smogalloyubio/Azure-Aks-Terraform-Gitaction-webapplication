@@ -1,4 +1,4 @@
-name: Infrastructure Provisioning Pipeline (Terraform)
+name: "Infrastructure Provisioning Pipeline (Terraform)"
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - "terraform-aks/**"
-      - ".github/workflows/infra-pipeline.yaml"
+      - ".github/workflows/infra-pipeline.yml"
 
 permissions:
   security-events: write
@@ -91,7 +91,6 @@ jobs:
       - name: Terraform Init
         run: |
           terraform init -reconfigure
-            
 
       - name: Terraform Validate
         run: terraform validate
@@ -104,13 +103,13 @@ jobs:
           if ! terraform state list | grep -q "azurerm_storage_account.state_sa"; then
             echo "Importing storage account into remote state..."
             terraform import -input=false azurerm_storage_account.state_sa \
-              "/subscriptions/a2b28c85-1948-4263-90ca-bade2bac4df4/resourceGroups/kml_rg_main-0810375e0ea74db3/providers/Microsoft.Storage/storageAccounts/tfst4aadea6c" || true
+              "/subscriptions/a2b28c85-1948-4263-90ca-bade2bac4df4/resourceGroups/kml_rg_main-7394019cd7a14f7f/providers/Microsoft.Storage/storageAccounts/tshopstatestorage" || true
           fi
 
           if ! terraform state list | grep -q "azurerm_storage_container.state_container"; then
             echo "Importing storage container into remote state..."
             terraform import -input=false azurerm_storage_container.state_container \
-              "https://tfst4aadea6c.blob.core.windows.net/nimbuskeyubio123" || true
+              "https://tshopstatestorage.blob.core.windows.net/tfstate" || true
           fi
 
       - name: Terraform Plan

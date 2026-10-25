@@ -41,3 +41,8 @@ override.tf.json
 *_override.tf.json
 .terraformrc
 terraform.rc
+azure-credentials.json
+python.py
+terraform-aks/.terraform/*
+terraform-aks/.terraform/*
+terraform-aks/.terraform.lock*
