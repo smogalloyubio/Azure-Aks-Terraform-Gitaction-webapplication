@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "state_sa" {
-  name                     = "tshopstatestorage"
+  name                     = "tshopstatesa739401"
   resource_group_name      = "kml_rg_main-7394019cd7a14f7f"
   location                 = "eastus"
   account_tier             = "Standard"

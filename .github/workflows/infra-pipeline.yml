@@ -99,13 +99,13 @@ jobs:
           if ! terraform state list | grep -q "azurerm_storage_account.state_sa"; then
             echo "Importing storage account into remote state..."
             terraform import -input=false azurerm_storage_account.state_sa \
-              "/subscriptions/a2b28c85-1948-4263-90ca-bade2bac4df4/resourceGroups/kml_rg_main-7394019cd7a14f7f/providers/Microsoft.Storage/storageAccounts/tshopstatestorage" || true
+              "/subscriptions/a2b28c85-1948-4263-90ca-bade2bac4df4/resourceGroups/kml_rg_main-7394019cd7a14f7f/providers/Microsoft.Storage/storageAccounts/tshopstatesa739401" || true
           fi
 
           if ! terraform state list | grep -q "azurerm_storage_container.state_container"; then
             echo "Importing storage container into remote state..."
             terraform import -input=false azurerm_storage_container.state_container \
-              "https://tshopstatestorage.blob.core.windows.net/tfstate" || true
+              "https://tshopstatesa739401.blob.core.windows.net/tfstate" || true
           fi
 
       - name: Terraform Plan
