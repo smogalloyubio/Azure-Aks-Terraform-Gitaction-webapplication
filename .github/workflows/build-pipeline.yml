@@ -240,13 +240,13 @@ jobs:
 
       - name: Build Docker Image Locally
         run: |
-          IMAGE_TAG="nimbusacrj9tt6o.azurecr.io/carshowroom-app:${{ github.sha }}"
+          IMAGE_TAG="rukevweubio/carshowroom-app:${{ github.sha }}"
           docker build --no-cache -t $IMAGE_TAG .
 
       - name: Run Trivy Image Vulnerability Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'nimbusacrj9tt6o.azurecr.io/carshowroom-app:${{ github.sha }}'
+          image-ref: 'rukevweubio/carshowroom-app:${{ github.sha }}'
           scan-type: 'image'
           severity: 'HIGH,CRITICAL'
           exit-code: 1
@@ -268,9 +268,9 @@ jobs:
 
       - name: Push Container Image to ACR
         run: |
-          docker push nimbusacrj9tt6o.azurecr.io/carshowroom-app:${{ github.sha }}
-          docker tag nimbusacrj9tt6o.azurecr.io/carshowroom-app:${{ github.sha }} nimbusacrj9tt6o.azurecr.io/carshowroom-app:latest
-          docker push nimbusacrj9tt6o.azurecr.io/carshowroom-app:latest
+          docker push rukevweubio/carshowroom-app:${{ github.sha }}
+          docker tag rukevweubio/carshowroom-app:${{ github.sha }} nimbusacrj9tt6o.azurecr.io/carshowroom-app:latest
+          docker push rukevweubio/carshowroom-app:latest
 
 
       - name: Install Cosign CLI
@@ -281,7 +281,7 @@ jobs:
         env:
           COSIGN_EXPERIMENTAL: "1"
         run: |
-          cosign sign --yes nimbusacrj9tt6o.azurecr.io/carshowroom-app:${{ github.sha }}
+          cosign sign --yes rukevweubio/carshowroom-app:${{ github.sha }}
 
   
       - name: Attach Signed SBOM Attestation
@@ -291,14 +291,14 @@ jobs:
           cosign attest --yes \
             --predicate sbom.json \
             --type spdxjson \
-            nimbusacrj9tt6o.azurecr.io/carshowroom-app:${{ github.sha }}
+            rukevweubio/carshowroom-app:${{ github.sha }}
 
       - name: Verify Image Signature
         run: |
           cosign verify \
             --certificate-identity-regexp "https://github.com/.*" \
             --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-            nimbusacrj9tt6o.azurecr.io/carshowroom-app:${{ github.sha }} > cosign-verification.json
+            rukevweubio/carshowroom-app:${{ github.sha }} > cosign-verification.json
 
 
       - name: Verify SBOM Attestation
@@ -307,7 +307,7 @@ jobs:
             --type spdxjson \
             --certificate-identity-regexp "https://github.com/.*" \
             --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-            nimbusacrj9tt6o.azurecr.io/carshowroom-app:${{ github.sha }} > cosign-attestation.json
+            rukevweubio/carshowroom-app:${{ github.sha }} > cosign-attestation.json
 
       - name: Upload Security & Attestation Artifacts
         uses: actions/upload-artifact@v4
