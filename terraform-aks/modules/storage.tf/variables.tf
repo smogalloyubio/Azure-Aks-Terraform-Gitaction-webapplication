@@ -1,6 +1,6 @@
 variable "storage_account_name" {
   type    = string
-  default = "tshopstorageacct"
+  default = "tshopappstorage"
 }
 
 variable "location" {
