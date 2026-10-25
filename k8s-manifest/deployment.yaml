@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  namespace: nimbus-dev
+  labels:
+    app: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      imagePullSecrets:
+        - name: acr-secret
+      containers:
+        - name: nimbus-carweb-app
+          image:  nimbusacrj9tt6o.azurecr.io/carshowroom-app:v1
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
