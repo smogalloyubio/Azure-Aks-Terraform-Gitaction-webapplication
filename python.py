@@ -2,7 +2,7 @@ read -rsp "Paste your new Azure client secret: " AZURE_CLIENT_SECRET
 echo
 
 export AZURE_CLIENT_SECRET
-export AZURE_CLIENT_ID="1d90bf66-c957-48be-8326-a4861777429c"
+export AZURE_CLIENT_ID="fec4f6e7-6372-4776-b8c0-6b57e59d71b9"
 export AZURE_TENANT_ID="$(az account show --query tenantId -o tsv)"
 export AZURE_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
 

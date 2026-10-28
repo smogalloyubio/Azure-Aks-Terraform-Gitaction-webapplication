@@ -46,3 +46,11 @@ python.py
 terraform-aks/.terraform/*
 terraform-aks/.terraform/*
 terraform-aks/.terraform.lock*
+storage.sh
+azure-credentials*
+azure-credentials.json
+azure*
+terraform-aks/.terraform/*
+
+
+
