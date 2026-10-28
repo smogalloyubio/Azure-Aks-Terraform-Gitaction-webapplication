@@ -1,6 +1,6 @@
 variable "storage_account_name" {
   type    = string
-  default = "tshopappstorage"
+  default = "tshopstatesa739401"
 }
 
 variable "location" {
@@ -13,5 +13,5 @@ variable "resource_group_name" {
 
 variable "container_name" {
   type    = string
-  default = "appdata"
+  default = "tfstate"
 }
