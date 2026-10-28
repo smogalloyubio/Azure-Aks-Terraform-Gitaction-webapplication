@@ -1,6 +1,6 @@
 resource "azurerm_storage_account" "state_sa" {
   name                     = "tshopstatesa739401"
-  resource_group_name      = "kml_rg_main-7394019cd7a14f7f"
+  resource_group_name      = "kml_rg_main-dd821858c67042ce"
   location                 = "eastus"
   account_tier             = "Standard"
   account_replication_type = "LRS"
