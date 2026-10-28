@@ -1,6 +1,6 @@
 variable "storage_account_name" {
   type    = string
-  default = "tshopstatesa739401"
+  default = "tshopappb9sk96"
 }
 
 variable "location" {
