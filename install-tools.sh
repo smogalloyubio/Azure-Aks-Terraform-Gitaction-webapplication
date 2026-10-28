@@ -2,7 +2,7 @@
 set -e
 
 echo "=== 1. Connecting to AKS Cluster ==="
-az aks get-credentials --resource-group kml_rg_main-dd821858c67042ce --name tableandshop-aks-cluster-rs90vq --overwrite-existing
+az aks get-credentials --resource-group kml_rg_main-9bfffc222ddd4367 --name tableandshop-aks-cluster-rs90vq --overwrite-existing
 
 echo "=== 2. Adding Helm Repositories ==="
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
