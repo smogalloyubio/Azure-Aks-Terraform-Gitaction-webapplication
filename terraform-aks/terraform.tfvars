@@ -1,4 +1,4 @@
-resource_group_name = "kml_rg_main-7394019cd7a14f7f"
+resource_group_name = "kml_rg_main-dd821858c67042ce"
 location            = "East US"
 cluster_name        = "tableandshop-aks-cluster"
 dns_prefix          = "tableandshop-k8s"
